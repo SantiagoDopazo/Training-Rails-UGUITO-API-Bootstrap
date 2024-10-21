@@ -13,7 +13,12 @@
 class Note < ApplicationRecord
   validates :user_id, :title, :content, :note_type,
             presence: true
-  validates :note_type, inclusion: { in: %w[review critique] }
+  enum note_type: { review: 0, critique: 1 }
+
   belongs_to :user
   has_one :utility, through: :user
+
+  def word_count
+    content.scan(/\w+/).size
+  end
 end

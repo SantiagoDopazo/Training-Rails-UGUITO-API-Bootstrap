@@ -73,6 +73,13 @@ class Utility < ApplicationRecord
     self.class.name.underscore.split('_').first
   end
 
+  def content_length(word_count)
+    self.class::RANGES.each do |category, range|
+      return category if range.include?(word_count)
+    end
+    'unknown'
+  end
+
   private
 
   def utility_type
