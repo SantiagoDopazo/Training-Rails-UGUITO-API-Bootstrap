@@ -3,9 +3,9 @@
 # Table name: notes
 #
 #  id         :bigint(8)        not null, primary key
-#  title      :string
-#  content    :string
-#  note_type  :string
+#  title      :string           not null
+#  content    :string           not null
+#  note_type  :integer          not null
 #  user_id    :bigint(8)        not null
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
