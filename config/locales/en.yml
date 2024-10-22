@@ -31,3 +31,4 @@
 
 en:
   hello: "Hello world"
+  error_review_lenght: "Review content must not be longer than %{limit} words"

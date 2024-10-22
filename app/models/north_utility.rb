@@ -1,7 +1,9 @@
 class NorthUtility < Utility
-  RANGES = {
-    'short' => (0..50),
-    'medium' => (51..100),
-    'long' => (101..Float::INFINITY)
-  }.freeze
+  def short_content
+    50
+  end
+
+  def medium_content
+    100
+  end
 end
