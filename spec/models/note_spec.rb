@@ -24,7 +24,6 @@ RSpec.describe Note, type: :model do
       end
 
       it 'is invalid if review word count exceeds NorthUtility limit' do
-        byebug
         expect { note.save! }.to raise_error(ActiveRecord::RecordInvalid)
       end
     end
