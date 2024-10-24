@@ -15,6 +15,23 @@ class Note < ApplicationRecord
             presence: true
   enum note_type: { review: 0, critique: 1 }
 
+  validate :validate_review_word_limit
+
   belongs_to :user
   has_one :utility, through: :user
+
+  def validate_review_word_limit
+    return unless review? && word_count >= utility.short_content
+    errors.add(:length, I18n.t(:error_review_lenght, { limit: utility.short_content }))
+  end
+
+  def word_count
+    content.scan(/\w+/).size
+  end
+
+  def content_length
+    return 'short' if word_count <= utility.short_content
+    return 'medium' if word_count <= utility.medium_content
+    'long'
+  end
 end
