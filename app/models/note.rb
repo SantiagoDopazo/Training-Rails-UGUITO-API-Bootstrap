@@ -31,12 +31,8 @@ class Note < ApplicationRecord
   end
 
   def content_length
-    if word_count <= utility.short_content
-      'short'
-    elsif word_count <= utility.medium_content
-      'medium'
-    else
-      'long'
-    end
+    return 'short' if word_count <= utility.short_content
+    return 'medium' if word_count <= utility.medium_content
+    'long'
   end
 end
