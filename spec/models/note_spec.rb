@@ -60,19 +60,56 @@ RSpec.describe Note, type: :model do
     context 'when user has NorthUtility' do
       let(:utility) { create(:north_utility) }
 
-      it 'returns "short" if word count is equal to or less than short_content' do
-        note.content = 'word ' * utility.short_content
-        expect(note.content_length).to eq('short')
+      context 'with short content' do
+        let(:word_count) { rand(0..utility.short_content) }
+
+        it 'returns "short" if word count is equal to or less than short_content' do
+          expect(note.content_length).to eq('short')
+        end
       end
 
-      it 'returns "medium" if word count is greater than short_content and equal to or less than medium_content' do
-        note.content = 'word ' * (utility.short_content + 1)
-        expect(note.content_length).to eq('medium')
+      context 'with medium content' do
+        let(:word_count) { rand(utility.short_content + 1..utility.medium_content) }
+
+        it 'returns "medium" if word count is greater than short_content and equal to or less than medium_content' do
+          expect(note.content_length).to eq('medium')
+        end
       end
 
-      it 'returns "long" if word count is greater than medium_content' do
-        note.content = 'word ' * (utility.medium_content + 1)
-        expect(note.content_length).to eq('long')
+      context 'with long content' do
+        let(:word_count) { rand(utility.medium_content + 1..999) }
+
+        it 'returns "long" if word count is greater than medium_content' do
+          expect(note.content_length).to eq('long')
+        end
+      end
+    end
+
+    context 'when user has SouthUtility' do
+      let(:utility) { create(:south_utility) }
+
+      context 'with short content' do
+        let(:word_count) { rand(0..utility.short_content) }
+
+        it 'returns "short" if word count is equal to or less than short_content' do
+          expect(note.content_length).to eq('short')
+        end
+      end
+
+      context 'with medium content' do
+        let(:word_count) { rand(utility.short_content + 1..utility.medium_content) }
+
+        it 'returns "medium" if word count is greater than short_content and equal to or less than medium_content' do
+          expect(note.content_length).to eq('medium')
+        end
+      end
+
+      context 'with long content' do
+        let(:word_count) { rand(utility.medium_content + 1..999) }
+
+        it 'returns "long" if word count is greater than medium_content' do
+          expect(note.content_length).to eq('long')
+        end
       end
     end
   end
