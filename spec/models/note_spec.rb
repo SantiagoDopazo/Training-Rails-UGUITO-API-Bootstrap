@@ -6,7 +6,7 @@ RSpec.describe Note, type: :model do
   end
 
   let(:user) { create(:user, utility: utility) }
-  let(:note) { build(:note, note_type: :review, content: Faker::Lorem.words(number: word_count), user: user) }
+  let(:note) { build(:note, note_type: :review, content: Faker::Lorem.words(number: content), user: user) }
 
   describe 'validations' do
     context 'when validating presence' do
@@ -19,7 +19,7 @@ RSpec.describe Note, type: :model do
       let(:utility) { create(:north_utility) }
 
       context 'with valid word count' do
-        let(:word_count) { rand(0..50) }
+        let(:content) { rand(0..50) }
 
         it 'is valid if review word count is in NorthUtility limit' do
           expect(note).to be_valid
@@ -27,7 +27,7 @@ RSpec.describe Note, type: :model do
       end
 
       context 'with invalid word count' do
-        let(:word_count) { rand(51..99) }
+        let(:content) { rand(51..99) }
 
         it 'is invalid if review word count exceeds NorthUtility limit' do
           expect { note.save! }.to raise_error(ActiveRecord::RecordInvalid)
@@ -39,7 +39,7 @@ RSpec.describe Note, type: :model do
       let(:utility) { create(:south_utility) }
 
       context 'with valid word count' do
-        let(:word_count) { rand(0..60) }
+        let(:content) { rand(0..60) }
 
         it 'is valid if review word count is in SouthUtility limit' do
           expect(note).to be_valid
@@ -47,11 +47,47 @@ RSpec.describe Note, type: :model do
       end
 
       context 'with invalid word count' do
-        let(:word_count) { rand(61..120) }
+        let(:content) { rand(61..120) }
 
         it 'is invalid if review word count exceeds SouthUtility limit' do
           expect { note.save! }.to raise_error(ActiveRecord::RecordInvalid)
         end
+      end
+    end
+  end
+
+  describe '#word_count' do
+    let(:note) { build(:note, content: content) }
+
+    context 'when content is nil' do
+      let(:content) { nil }
+
+      it 'returns 0' do
+        expect(note.word_count).to eq(0)
+      end
+    end
+
+    context 'when content contains one word' do
+      let(:content) { 'Hello' }
+
+      it 'returns 1' do
+        expect(note.word_count).to eq(1)
+      end
+    end
+
+    context 'when content contains multiple words' do
+      let(:content) { 'Hello world! im doing test in ruby.' }
+
+      it 'returns the correct word count' do
+        expect(note.word_count).to eq(7)
+      end
+    end
+
+    context 'when content contains multiple spaces' do
+      let(:content) { 'Hello    world' }
+
+      it 'counts words correctly, ignoring extra spaces' do
+        expect(note.word_count).to eq(2)
       end
     end
   end
@@ -61,7 +97,7 @@ RSpec.describe Note, type: :model do
       let(:utility) { create(:north_utility) }
 
       context 'with short content' do
-        let(:word_count) { rand(0..utility.short_content) }
+        let(:content) { rand(0..utility.short_content) }
 
         it 'returns "short" if word count is equal to or less than short_content' do
           expect(note.content_length).to eq('short')
@@ -69,7 +105,7 @@ RSpec.describe Note, type: :model do
       end
 
       context 'with medium content' do
-        let(:word_count) { rand(utility.short_content + 1..utility.medium_content) }
+        let(:content) { rand(utility.short_content + 1..utility.medium_content) }
 
         it 'returns "medium" if word count is greater than short_content and equal to or less than medium_content' do
           expect(note.content_length).to eq('medium')
@@ -77,7 +113,7 @@ RSpec.describe Note, type: :model do
       end
 
       context 'with long content' do
-        let(:word_count) { rand(utility.medium_content + 1..999) }
+        let(:content) { rand(utility.medium_content + 1..999) }
 
         it 'returns "long" if word count is greater than medium_content' do
           expect(note.content_length).to eq('long')
@@ -89,7 +125,7 @@ RSpec.describe Note, type: :model do
       let(:utility) { create(:south_utility) }
 
       context 'with short content' do
-        let(:word_count) { rand(0..utility.short_content) }
+        let(:content) { rand(0..utility.short_content) }
 
         it 'returns "short" if word count is equal to or less than short_content' do
           expect(note.content_length).to eq('short')
@@ -97,7 +133,7 @@ RSpec.describe Note, type: :model do
       end
 
       context 'with medium content' do
-        let(:word_count) { rand(utility.short_content + 1..utility.medium_content) }
+        let(:content) { rand(utility.short_content + 1..utility.medium_content) }
 
         it 'returns "medium" if word count is greater than short_content and equal to or less than medium_content' do
           expect(note.content_length).to eq('medium')
@@ -105,7 +141,7 @@ RSpec.describe Note, type: :model do
       end
 
       context 'with long content' do
-        let(:word_count) { rand(utility.medium_content + 1..999) }
+        let(:content) { rand(utility.medium_content + 1..999) }
 
         it 'returns "long" if word count is greater than medium_content' do
           expect(note.content_length).to eq('long')
