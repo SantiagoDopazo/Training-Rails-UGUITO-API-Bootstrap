@@ -19,8 +19,9 @@ class Note < ApplicationRecord
 
   belongs_to :user
   has_one :utility, through: :user
+
   def validate_review_word_limit
-    return unless review? && word_count >= utility.short_content
+    return unless review? && word_count > utility.short_content
     errors.add(:length, I18n.t(:error_review_lenght, { limit: utility.short_content }))
   end
 
