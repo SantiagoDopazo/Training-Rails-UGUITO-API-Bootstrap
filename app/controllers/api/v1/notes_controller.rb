@@ -5,13 +5,21 @@ module Api
         render json: notes_filtered, status: :ok, each_serializer: IndexNoteSerializer
       end
 
+      def show
+        render json: show_note, status: :ok, serializer: ShowNoteSerializer
+      end
+
       private
 
       def notes
-        Note.all.where(filtering_params)
+        Note.all
       end
 
       def notes_filtered
+        notes.where(filtering_params)
+      end
+
+      def notes_paginated
         notes.order(ordering_params).page(params[:page]).per(params[:page_size])
       end
 
@@ -21,6 +29,10 @@ module Api
 
       def filtering_params
         params.permit(%i[note_type])
+      end
+
+      def show_note
+        notes.find(params.require(:id))
       end
     end
   end
