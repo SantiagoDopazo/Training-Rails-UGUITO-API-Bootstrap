@@ -8,11 +8,11 @@ module Api
       private
 
       def notes
-        Note.all
+        Note.all.where(filtering_params)
       end
 
       def notes_filtered
-        notes.where(filtering_params).order(ordering_params).page(params[:page]).per(params[:page_size])
+        notes.order(ordering_params).page(params[:page]).per(params[:page_size])
       end
 
       def ordering_params
