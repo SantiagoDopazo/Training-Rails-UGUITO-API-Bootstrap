@@ -2,7 +2,7 @@ module Api
   module V1
     class NotesController < ApplicationController
       def index
-        render json: notes_filtered, status: :ok, each_serializer: IndexNoteSerializer
+        render json: notes_paginated, status: :ok, each_serializer: IndexNoteSerializer
       end
 
       def show
@@ -20,7 +20,7 @@ module Api
       end
 
       def notes_paginated
-        notes.order(ordering_params).page(params[:page]).per(params[:page_size])
+        notes_filtered.order(ordering_params).page(params[:page]).per(params[:page_size])
       end
 
       def ordering_params
