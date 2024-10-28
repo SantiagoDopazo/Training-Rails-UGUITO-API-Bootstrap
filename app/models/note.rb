@@ -26,8 +26,7 @@ class Note < ApplicationRecord
   end
 
   def word_count
-    return 0 if content.nil?
-    content.scan(/\w+/).size
+    content&.scan(/\w+/)&.size || 0
   end
 
   def content_length
