@@ -1,6 +1,8 @@
 module Api
   module V1
     class NotesController < ApplicationController
+      before_action :authenticate_user!
+
       def index
         render json: notes_paginated, status: :ok, each_serializer: IndexNoteSerializer
       end
@@ -12,7 +14,7 @@ module Api
       private
 
       def notes
-        Note.all
+        current_user.notes
       end
 
       def notes_filtered
