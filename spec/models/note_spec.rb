@@ -1,16 +1,15 @@
 require 'rails_helper'
 
 RSpec.describe Note, type: :model do
-  subject(:note) { build(:note, note_type: :review, content: content, user: user) }
-
-  let(:content) { Faker::Lorem.words(number: words) }
-
+  let(:note) { build(:note, user: user) }
+  let(:note_with_attributes) { build(:note, note_type: :review, content: Faker::Lorem.words(number: content), user: user) }
+  let(:utility) { create(:north_utility) }
   let(:user) { create(:user, utility: utility) }
 
   it { is_expected.to belong_to(:user) }
 
   it 'has a valid factory' do
-    expect(subject).to be_valid
+    expect(note).to be_valid
   end
 
   %i[user_id title content note_type].each do |value|
@@ -22,10 +21,10 @@ RSpec.describe Note, type: :model do
       let(:utility) { create(:north_utility) }
 
       context 'with valid word count' do
-        let(:words) { rand(0..50) }
+        let(:content) { rand(0..50) }
 
         it 'create note succesfully' do
-          expect(note.save!).to be_truthy
+          expect(note_with_attributes.save!).to be_truthy
         end
       end
 
@@ -33,7 +32,7 @@ RSpec.describe Note, type: :model do
         let(:content) { rand(51..99) }
 
         it 'returns ActiveRecord::RecordInvalid' do
-          expect { note.save! }.to raise_error(ActiveRecord::RecordInvalid)
+          expect { note_with_attributes.save! }.to raise_error(ActiveRecord::RecordInvalid)
         end
       end
     end
@@ -45,7 +44,7 @@ RSpec.describe Note, type: :model do
         let(:content) { rand(0..60) }
 
         it 'create note succesfully' do
-          expect(note.save!).to be_truthy
+          expect(note_with_attributes.save!).to be_truthy
         end
       end
 
@@ -53,7 +52,7 @@ RSpec.describe Note, type: :model do
         let(:content) { rand(61..120) }
 
         it 'returns ActiveRecord::RecordInvalid' do
-          expect { note.save! }.to raise_error(ActiveRecord::RecordInvalid)
+          expect { note_with_attributes.save! }.to raise_error(ActiveRecord::RecordInvalid)
         end
       end
     end
@@ -103,7 +102,7 @@ RSpec.describe Note, type: :model do
         let(:content) { rand(0..utility.short_content) }
 
         it 'returns "short"' do
-          expect(note.content_length).to eq('short')
+          expect(note_with_attributes.content_length).to eq('short')
         end
       end
 
@@ -111,7 +110,7 @@ RSpec.describe Note, type: :model do
         let(:content) { rand(utility.short_content + 1..utility.medium_content) }
 
         it 'returns "medium"' do
-          expect(note.content_length).to eq('medium')
+          expect(note_with_attributes.content_length).to eq('medium')
         end
       end
 
@@ -119,7 +118,7 @@ RSpec.describe Note, type: :model do
         let(:content) { rand(utility.medium_content + 1..999) }
 
         it 'returns "long"' do
-          expect(note.content_length).to eq('long')
+          expect(note_with_attributes.content_length).to eq('long')
         end
       end
     end
@@ -131,7 +130,7 @@ RSpec.describe Note, type: :model do
         let(:content) { rand(0..utility.short_content) }
 
         it 'returns "short"' do
-          expect(note.content_length).to eq('short')
+          expect(note_with_attributes.content_length).to eq('short')
         end
       end
 
@@ -139,7 +138,7 @@ RSpec.describe Note, type: :model do
         let(:content) { rand(utility.short_content + 1..utility.medium_content) }
 
         it 'returns "medium"' do
-          expect(note.content_length).to eq('medium')
+          expect(note_with_attributes.content_length).to eq('medium')
         end
       end
 
@@ -147,7 +146,7 @@ RSpec.describe Note, type: :model do
         let(:content) { rand(utility.medium_content + 1..999) }
 
         it 'returns "long"' do
-          expect(note.content_length).to eq('long')
+          expect(note_with_attributes.content_length).to eq('long')
         end
       end
     end
