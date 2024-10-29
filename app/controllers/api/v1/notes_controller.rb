@@ -26,7 +26,7 @@ module Api
       end
 
       def ordering_params
-        { created_at: params[:order] }
+        { created_at: params[:order] || 'asc' }
       end
 
       def filtering_params
