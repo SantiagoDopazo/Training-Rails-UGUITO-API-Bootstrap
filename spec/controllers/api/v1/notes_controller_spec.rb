@@ -104,4 +104,7 @@ describe Api::V1::NotesController, type: :controller do
       end
     end
   end
+
+  describe 'POST #create' do
+  end
 end
