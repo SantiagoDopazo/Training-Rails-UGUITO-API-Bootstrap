@@ -2,8 +2,10 @@ module Api
   module V1
     class NotesController < ApplicationController
       before_action :authenticate_user!
+
       rescue_from ActiveRecord::RecordInvalid, with: :respond_invalid_record
-      rescue_from ArgumentError, with: :invalid_type
+      rescue_from ActionController::ParameterMissing, with: :parameter_missing
+      before_action :validate_note_type, only: :create
 
       def index
         render json: notes_paginated, status: :ok, each_serializer: IndexNoteSerializer
@@ -15,14 +17,13 @@ module Api
 
       def create
         current_user.notes.create!(note_params)
-        render json: 'message: Nota creada con exito.', status: :created
+        render json: { message: I18n.t('controller.note_create_success') }, status: :created
       end
 
       private
 
       def notes
         current_user.notes
-        byebug
       end
 
       def notes_filtered
@@ -46,15 +47,29 @@ module Api
       end
 
       def note_params
-        params.require(:note).permit(:title, :note_type, :content)
+        params.require(:note).require(%i[title note_type content])
+        params.permit(note: %i[title note_type content])[:note].to_h
       end
 
-      def respond_invalid_record(error)
-        render json: error, status: :bad_request
+      def respond_invalid_record
+        render json: { error: I18n.t('controller.note_invalid_content') }, status: :bad_request
       end
 
-      def invalid_type(error)
-        render json: error, status: :unprocessable_entity
+      def parameter_missing
+        render json: { error: I18n.t('controller.note_parameter_missing') }, status: :bad_request
+      end
+
+      def validate_note_type
+        render_invalid_note_type unless correct_note_type?
+      end
+
+      def render_invalid_note_type
+        render json:
+          { error: I18n.t('controller.note_invalid_type') }, status: :unprocessable_entity
+      end
+
+      def correct_note_type?
+        Note.note_types.keys.include?(params[:note][:note_type])
       end
     end
   end

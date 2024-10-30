@@ -31,4 +31,10 @@
 
 es:
   hello: "Hola Mundo!"
-  error_review_lenght: "El contenido de review no puede ser mayor a %{limit} palabras"
+  model:
+    error_review_lenght: "El contenido de review no puede ser mayor a %{limit} palabras"
+  controller:
+    note_create_success: 'Nota creada con éxito.'
+    note_invalid_type: 'El tipo de nota no es válido.'
+    note_invalid_content: 'Una reseña no puede superar las 50 palabras.'
+    note_parameter_missing: 'Faltan parametros requeridos.'
