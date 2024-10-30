@@ -22,7 +22,7 @@ class Note < ApplicationRecord
 
   def validate_review_word_limit
     return unless review? && word_count > utility.short_content
-    errors.add(:length, I18n.t(:error_review_lenght, { limit: utility.short_content }))
+    errors.add(:length, I18n.t('model.error_review_length', { limit: utility.short_content }))
   end
 
   def word_count

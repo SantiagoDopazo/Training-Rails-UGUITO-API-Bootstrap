@@ -32,10 +32,9 @@
 en:
   hello: "Hello world"
   model:
-    error_review_lenght: "Review content must not be longer than %{limit} words"
+    error_review_length: 'A review cannot exceed %{limit} words.'
   controller:
     note_create_success: 'Note created successfully.'
     note_invalid_type: 'The note type is not valid.'
-    note_invalid_content: 'A review cannot exceed 50 words.'
     note_parameter_missing: 'Required parameters are missing.'
 

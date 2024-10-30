@@ -52,7 +52,7 @@ module Api
       end
 
       def respond_invalid_record
-        render json: { error: I18n.t('controller.note_invalid_content') }, status: :bad_request
+        render json: error_review_length, status: :bad_request
       end
 
       def parameter_missing
@@ -61,6 +61,11 @@ module Api
 
       def validate_note_type
         render_invalid_note_type unless correct_note_type?
+      end
+
+      def error_review_length
+        { error: I18n.t('model.error_review_length',
+                        { limit: current_user.utility.short_content }) }
       end
 
       def render_invalid_note_type
