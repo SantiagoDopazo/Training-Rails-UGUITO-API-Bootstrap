@@ -48,7 +48,7 @@ RSpec.describe Note, type: :model do
     let(:expected_word_count) { note_with_attributes.content.split.size }
 
     context 'when content is random' do
-      let(:number) { Faker::Number.between(from: 0, to: 50) }
+      let(:number) { Faker::Number.between(from: 0, to: 999) }
 
       it 'returns the correct word count' do
         expect(note_with_attributes.word_count).to eq(expected_word_count)
