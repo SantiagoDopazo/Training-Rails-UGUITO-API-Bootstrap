@@ -60,11 +60,9 @@ describe Api::V1::NotesController, type: :controller do
     end
 
     context 'when user is not logged in' do
-      context 'when fetching all user notes' do
-        before { get :index }
+      before { get :index }
 
-        it_behaves_like 'unauthorized'
-      end
+      it_behaves_like 'unauthorized'
     end
   end
 
