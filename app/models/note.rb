@@ -21,7 +21,7 @@ class Note < ApplicationRecord
   has_one :utility, through: :user
 
   scope :by_note_type, ->(note_type) { where(note_type: note_type) }
-  scope :ordered_by, ->(order) { order(created_at: order) }
+  scope :ordered_by, ->(order) { order(created_at: order || 'asc') }
   scope :paginated, ->(page, page_size) { page(page).per(page_size) }
 
   def validate_review_word_limit
