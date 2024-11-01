@@ -4,6 +4,9 @@ module Api
       before_action :authenticate_user!
 
       def index
+        unless valid_note_type?
+          return render json: { error: 'Invalid note_type' }, status: :unprocessable_entity
+        end
         render json: notes_paginated, status: :ok, each_serializer: IndexNoteSerializer
       end
 
@@ -17,20 +20,15 @@ module Api
         current_user.notes
       end
 
-      def notes_filtered
-        notes.where(filtering_params)
+      def valid_note_type?
+        Note.note_types.keys.include?(params[:note_type])
       end
 
       def notes_paginated
-        notes_filtered.order(ordering_params).page(params[:page]).per(params[:page_size])
-      end
-
-      def ordering_params
-        { created_at: params[:order] }
-      end
-
-      def filtering_params
-        params.permit(%i[note_type])
+        notes
+          .by_note_type(params[:note_type])
+          .ordered_by(params[:order])
+          .paginated(params[:page], params[:page_size])
       end
 
       def show_note
