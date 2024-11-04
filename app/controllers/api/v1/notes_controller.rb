@@ -4,7 +4,7 @@ module Api
       before_action :authenticate_user!
 
       def index
-        if params[:note_type].present? && invalid_note_type?
+        if invalid_note_type?
           return render json: { error: 'Invalid note_type' }, status: :unprocessable_entity
         end
         render json: notes_filtered, status: :ok, each_serializer: IndexNoteSerializer
@@ -21,7 +21,7 @@ module Api
       end
 
       def invalid_note_type?
-        !Note.note_types.keys.include?(params[:note_type])
+        params[:note_type].present? && !Note.note_types.keys.include?(params[:note_type])
       end
 
       def notes_filtered
