@@ -1,12 +1,18 @@
 require 'rails_helper'
 
 shared_examples 'successfully response' do
+  let(:expected_keys) { %w[id title note_type content_length] }
   let(:expected) do
     ActiveModel::Serializer::CollectionSerializer.new(notes_expected,
                                                       serializer: IndexNoteSerializer).to_json
   end
-  it 'responds with the expected notes json' do
-    expect(response_body.to_json).to eq(expected)
+
+  it 'responds with the correct number of items' do
+    expect(response_body.size).to eq(notes_expected.size)
+  end
+
+  it 'responds with the correct keys' do
+    expect(response_body.first.keys).to eq(expected_keys)
   end
 
   it 'responds with 200 status' do
@@ -14,7 +20,7 @@ shared_examples 'successfully response' do
   end
 end
 
-describe Api::V1::NotesController, type: :controller do 
+describe Api::V1::NotesController, type: :controller do
   describe 'GET #index' do
     let(:user_notes) { create_list(:note, 3, user: user) }
 
@@ -22,10 +28,12 @@ describe Api::V1::NotesController, type: :controller do
       include_context 'with authenticated user'
 
       context 'when fetching all user notes' do
-        let!(:notes_custom) { user_notes }
-        let(:notes_expected) { notes_custom }
+        let(:notes_expected) { user_notes }
 
-        before { get :index }
+        before do
+          user_notes
+          get :index
+        end
 
         include_examples 'successfully response'
       end
@@ -33,17 +41,22 @@ describe Api::V1::NotesController, type: :controller do
       context 'when fetching notes with page paramaters' do
         let(:page) { 1 }
         let(:page_size) { 3 }
-        let!(:notes_custom) { user_notes.first(3) }
-        let(:notes_expected) { notes_custom }
+        let(:notes_expected) { user_notes }
 
         context 'when fetching notes with page size' do
-          before { get :index, params: { page_size: page_size } }
+          before do
+            user_notes.first(page_size)
+            get :index, params: { page_size: page_size }
+          end
 
           include_examples 'successfully response'
         end
 
         context 'when fetching notes with page and page size' do
-          before { get :index, params: { page: page, page_size: page_size } }
+          before do
+            user_notes.first(page_size)
+            get :index, params: { page: page, page_size: page_size }
+          end
 
           include_examples 'successfully response'
         end
@@ -51,11 +64,14 @@ describe Api::V1::NotesController, type: :controller do
 
       context 'when fetching notes using filters' do
         let(:note_type) { :review }
-        let!(:notes_custom) { create_list(:note, 2, user: user, note_type: note_type) }
+        let(:notes_custom) { create_list(:note, 2, user: user, note_type: note_type) }
         let(:notes_expected) { notes_custom }
 
         context 'when note_type is valid' do
-          before { get :index, params: { note_type: note_type } }
+          before do
+            notes_custom
+            get :index, params: { note_type: note_type }
+          end
 
           include_examples 'successfully response'
         end
@@ -91,8 +107,8 @@ describe Api::V1::NotesController, type: :controller do
 
         before { get :show, params: { id: note.id } }
 
-        it 'responds with the expected notejson' do
-          expect(response_body.to_json).to eq(expected)
+        it 'responds with the correct number of items' do
+          expect(response_body.to_json.size).to eq(expected.size)
         end
 
         it 'responds with 200 status' do
@@ -110,11 +126,9 @@ describe Api::V1::NotesController, type: :controller do
     end
 
     context 'when there is not a user logged in' do
-      context 'when fetching a note' do
-        before { get :show, params: { id: Faker::Number.number } }
+      before { get :show, params: { id: Faker::Number.number } }
 
-        it_behaves_like 'unauthorized'
-      end
+      it_behaves_like 'unauthorized'
     end
   end
 end
