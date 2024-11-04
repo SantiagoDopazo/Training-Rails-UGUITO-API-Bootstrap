@@ -1,5 +1,11 @@
 require 'rails_helper'
 
+shared_examples 'a content_length response' do |length|
+  it "returns #{length}" do
+    expect(note_with_attributes.content_length).to eq(length)
+  end
+end
+
 RSpec.describe Note, type: :model do
   let(:note) { build(:note, user: user) }
   let(:note_with_attributes) { build(:note, note_type: :review, content: Faker::Lorem.sentence(word_count: number), user: user) }
@@ -14,12 +20,6 @@ RSpec.describe Note, type: :model do
 
   %i[user_id title content note_type].each do |value|
     it { is_expected.to validate_presence_of(value) }
-  end
-
-  shared_examples 'a content_length response' do |length|
-    it "returns #{length}" do
-      expect(note_with_attributes.content_length).to eq(length)
-    end
   end
 
   describe '#validate_review_word_limit' do
