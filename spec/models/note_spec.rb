@@ -8,7 +8,6 @@ end
 
 RSpec.describe Note, type: :model do
   let(:note) { build(:note, user: user) }
-  let(:note_with_attributes) { build(:note, note_type: :review, content: Faker::Lorem.sentence(word_count: number), user: user) }
   let(:utility) { create(%i[north_utility south_utility].sample) }
   let(:user) { create(:user, utility: utility) }
 
@@ -49,32 +48,31 @@ RSpec.describe Note, type: :model do
   end
 
   describe '#word_count' do
-    let(:expected_word_count) { note_with_attributes.content.split.size }
+    let(:note_with_attributes) { build(:note, note_type: :review, content: Faker::Lorem.sentence(word_count: words_number), user: user) }
+    let(:words_number) { Faker::Number.between(from: 0, to: 999) }
 
-    context 'when content is random' do
-      let(:number) { Faker::Number.between(from: 0, to: 999) }
-
-      it 'returns the correct word count' do
-        expect(note_with_attributes.word_count).to eq(expected_word_count)
-      end
+    it 'returns the correct word count' do
+      expect(note_with_attributes.word_count).to eq(words_number)
     end
   end
 
   describe '#content_length' do
+    let(:note_with_attributes) { build(:note, note_type: :review, content: Faker::Lorem.sentence(word_count: words_number), user: user) }
+
     context 'with short content' do
-      let(:number) { Faker::Number.between(from: 0, to: utility.short_content) }
+      let(:words_number) { Faker::Number.between(from: 0, to: utility.short_content) }
 
       it_behaves_like 'a content_length response', 'short'
     end
 
     context 'with medium content' do
-      let(:number) { Faker::Number.between(from: utility.short_content + 1, to: utility.medium_content) }
+      let(:words_number) { Faker::Number.between(from: utility.short_content + 1, to: utility.medium_content) }
 
       it_behaves_like 'a content_length response', 'medium'
     end
 
     context 'with long content' do
-      let(:number) { Faker::Number.between(from: utility.medium_content + 1, to: 999) }
+      let(:words_number) { Faker::Number.between(from: utility.medium_content + 1, to: 999) }
 
       it_behaves_like 'a content_length response', 'long'
     end
