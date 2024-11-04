@@ -1,8 +1,6 @@
 module Api
   module V1
     class NotesController < ApplicationController
-      before_action :authenticate_user!
-
       def index
         if invalid_note_type?
           return render json: { error: 'Invalid note_type' }, status: :unprocessable_entity
@@ -17,7 +15,7 @@ module Api
       private
 
       def notes
-        current_user.notes
+        Note.all
       end
 
       def invalid_note_type?
