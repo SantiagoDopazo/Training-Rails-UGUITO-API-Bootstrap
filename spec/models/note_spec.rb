@@ -16,30 +16,34 @@ RSpec.describe Note, type: :model do
     it { is_expected.to validate_presence_of(value) }
   end
 
-  shared_examples 'returns content length' do |length|
+  shared_examples 'a content_length response' do |length|
     it "returns #{length}" do
       expect(note_with_attributes.content_length).to eq(length)
     end
   end
 
   describe '#validate_review_word_limit' do
-    let(:user) { create(:user, utility: utility) }
+    let(:review_note) { build(:note, note_type: :review, user: user) }
 
-    context 'with valid word count' do
-      let(:number) { Faker::Number.between(from: 0, to: utility.short_content) }
+    before do
+      allow(review_note).to receive(:content_length).and_return(content_length)
+    end
+
+    context 'when content length is short' do
+      let(:content_length) { 'short' }
 
       it 'does not have errors' do
-        note_with_attributes.save
-        expect(note_with_attributes.errors.count).to eq(0)
+        review_note.save
+        expect(review_note.errors.count).to eq(0)
       end
     end
 
-    context 'with invalid word count' do
-      let(:number) { Faker::Number.between(from: utility.short_content + 1, to: 999) }
+    context 'when content length is not short' do
+      let(:content_length) { %w[medium long].sample }
 
       it 'has errors' do
-        note_with_attributes.save
-        expect(note_with_attributes.errors.count).to eq(1)
+        review_note.save
+        expect(review_note.errors.count).to eq(1)
       end
     end
   end
@@ -60,19 +64,19 @@ RSpec.describe Note, type: :model do
     context 'with short content' do
       let(:number) { Faker::Number.between(from: 0, to: utility.short_content) }
 
-      it_behaves_like 'returns content length', 'short'
+      it_behaves_like 'a content_length response', 'short'
     end
 
     context 'with medium content' do
       let(:number) { Faker::Number.between(from: utility.short_content + 1, to: utility.medium_content) }
 
-      it_behaves_like 'returns content length', 'medium'
+      it_behaves_like 'a content_length response', 'medium'
     end
 
     context 'with long content' do
       let(:number) { Faker::Number.between(from: utility.medium_content + 1, to: 999) }
 
-      it_behaves_like 'returns content length', 'long'
+      it_behaves_like 'a content_length response', 'long'
     end
   end
 end
