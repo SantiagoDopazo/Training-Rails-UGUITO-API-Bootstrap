@@ -1,0 +1,2 @@
+class RetrieveBooksWorker < BaseUserWorker
+end

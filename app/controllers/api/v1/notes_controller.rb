@@ -20,6 +20,9 @@ module Api
         render json: { message: I18n.t('controller.note_create_success') }, status: :created
       end
 
+      def index_async
+      end
+
       private
 
       def notes
