@@ -2,7 +2,6 @@ require 'rails_helper'
 
 shared_examples 'a content_length response' do |length|
   it "returns #{length}" do
-    byebug
     expect(note_with_attributes.content_length).to eq(length)
   end
 end
@@ -42,7 +41,6 @@ RSpec.describe Note, type: :model do
       let(:content_length) { %w[medium long].sample }
 
       it 'has errors' do
-        review_note.save
         expect(review_note.errors.count).to eq(1)
       end
     end
