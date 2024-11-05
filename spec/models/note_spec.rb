@@ -7,14 +7,12 @@ shared_examples 'a content_length response' do |length|
 end
 
 RSpec.describe Note, type: :model do
-  let(:note) { build(:note, user: user) }
-  let(:utility) { create(%i[north_utility south_utility].sample) }
-  let(:user) { create(:user, utility: utility) }
+  subject(:note) { create(:note) }
 
   it { is_expected.to belong_to(:user) }
 
   it 'has a valid factory' do
-    expect(note).to be_valid
+    expect(subject).to be_valid
   end
 
   %i[user_id title content note_type].each do |value|
@@ -22,6 +20,8 @@ RSpec.describe Note, type: :model do
   end
 
   describe '#validate_review_word_limit' do
+    let(:utility) { create(%i[north_utility south_utility].sample) }
+    let(:user) { create(:user, utility: utility) }
     let(:review_note) { build(:note, note_type: :review, user: user) }
 
     before do
@@ -48,7 +48,7 @@ RSpec.describe Note, type: :model do
   end
 
   describe '#word_count' do
-    let(:note_with_attributes) { build(:note, note_type: :review, content: Faker::Lorem.sentence(word_count: words_number), user: user) }
+    let(:note_with_attributes) { build(:note, content: Faker::Lorem.sentence(word_count: words_number)) }
     let(:words_number) { Faker::Number.between(from: 0, to: 999) }
 
     it 'returns the correct word count' do
@@ -57,6 +57,8 @@ RSpec.describe Note, type: :model do
   end
 
   describe '#content_length' do
+    let(:utility) { create(%i[north_utility south_utility].sample) }
+    let(:user) { create(:user, utility: utility) }
     let(:note_with_attributes) { build(:note, note_type: :review, content: Faker::Lorem.sentence(word_count: words_number), user: user) }
 
     context 'with short content' do

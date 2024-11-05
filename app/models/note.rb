@@ -15,7 +15,7 @@ class Note < ApplicationRecord
             presence: true
   enum note_type: { review: 0, critique: 1 }
 
-  validate :validate_review_word_limit, if: -> { user.present? }
+  validate :validate_review_word_limit, if: -> { user.present? && content.present? }
 
   belongs_to :user
   has_one :utility, through: :user
