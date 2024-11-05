@@ -2,6 +2,7 @@ require 'rails_helper'
 
 shared_examples 'a content_length response' do |length|
   it "returns #{length}" do
+    byebug
     expect(note_with_attributes.content_length).to eq(length)
   end
 end
@@ -26,13 +27,13 @@ RSpec.describe Note, type: :model do
 
     before do
       allow(review_note).to receive(:content_length).and_return(content_length)
+      review_note.save
     end
 
     context 'when content length is short' do
       let(:content_length) { 'short' }
 
       it 'does not have errors' do
-        review_note.save
         expect(review_note.errors.count).to eq(0)
       end
     end
@@ -59,7 +60,7 @@ RSpec.describe Note, type: :model do
   describe '#content_length' do
     let(:utility) { create(%i[north_utility south_utility].sample) }
     let(:user) { create(:user, utility: utility) }
-    let(:note_with_attributes) { build(:note, note_type: :review, content: Faker::Lorem.sentence(word_count: words_number), user: user) }
+    let(:note_with_attributes) { build(:note, content: Faker::Lorem.sentence(word_count: words_number), user: user) }
 
     context 'with short content' do
       let(:words_number) { Faker::Number.between(from: 0, to: utility.short_content) }
