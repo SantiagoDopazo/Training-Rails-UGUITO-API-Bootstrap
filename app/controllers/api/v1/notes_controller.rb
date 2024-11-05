@@ -21,6 +21,9 @@ module Api
       end
 
       def index_async
+        response = execute_async(RetrieveNotesWorker, current_user.id, index_async_params)
+        byebug
+        async_custom_response(response)
       end
 
       private
@@ -78,6 +81,10 @@ module Api
 
       def correct_note_type?
         Note.note_types.keys.include?(params[:note][:note_type])
+      end
+
+      def index_async_params
+        { author: params.require(:author) }
       end
     end
   end
