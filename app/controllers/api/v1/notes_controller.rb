@@ -22,7 +22,7 @@ module Api
 
       def index_async
         response = execute_async(RetrieveNotesWorker, current_user.id, index_async_params)
-        byebug
+        # byebug
         async_custom_response(response)
       end
 

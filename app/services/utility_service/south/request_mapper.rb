@@ -9,7 +9,7 @@ module UtilityService
 
       def retrieve_notes(params)
         {
-          autor: params['author']
+          Autor: params['author']
         }
       end
     end

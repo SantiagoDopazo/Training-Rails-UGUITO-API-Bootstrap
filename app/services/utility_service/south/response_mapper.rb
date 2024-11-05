@@ -34,7 +34,7 @@ module UtilityService
             created_at: note['FechaCreacionNota'],
             content: note['Contenido'],
             #user: map_note_user(note)
-          }.tap {byebug}
+          }
         end
       end
 
