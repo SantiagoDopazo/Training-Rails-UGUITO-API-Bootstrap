@@ -24,6 +24,28 @@ module UtilityService
           }
         end
       end
+
+      def map_notes(notes)
+        notes.map do |note|
+          {
+            id: note['id'],
+            title: note['titulo'],
+            #type: map_note_type[note['tipo']],
+            created_at: note['fecha_creacion'],
+            content: note['contenido'],
+            #user: map_note_user(note),
+            book: map_note_book(note['libro'])
+          }
+        end
+      end
+
+      def map_note_book(book)
+        {
+          title: book['titulo'],
+          author: book['autor'],
+          genre: book['genero']
+        }
+      end
     end
   end
 end
