@@ -2,9 +2,7 @@ module Api
   module V1
     class NotesController < ApplicationController
       def index
-        if invalid_note_type?
-          return render json: { error: 'Invalid note_type' }, status: :unprocessable_entity
-        end
+        return render_invalid_note_type if invalid_note_type?
         render json: notes_filtered, status: :ok, each_serializer: IndexNoteSerializer
       end
 
@@ -19,7 +17,15 @@ module Api
       end
 
       def invalid_note_type?
-        params[:note_type].present? && !Note.note_types.keys.include?(params[:note_type])
+        note_type_present? && note_type_ok?
+      end
+
+      def note_type_present?
+        params[:note_type].present?
+      end
+
+      def note_type_ok?
+        !Note.note_types.keys.include?(params[:note_type])
       end
 
       def notes_filtered
@@ -29,12 +35,12 @@ module Api
           .paginated(params[:page], params[:page_size])
       end
 
-      def filtering_params
-        params.permit(%i[note_type]).to_h
-      end
-
       def show_note
         notes.find(params.require(:id))
+      end
+
+      def render_invalid_note_type
+        render json: { error: I18n.t(:error_note_type_invalid) }
       end
     end
   end

@@ -32,3 +32,4 @@
 es:
   hello: "Hola Mundo!"
   error_review_lenght: "El contenido de review no puede ser mayor a %{limit} palabras"
+  error_note_type_invalid: 'Tipo de nota invalido'
