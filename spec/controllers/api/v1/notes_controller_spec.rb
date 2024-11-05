@@ -45,7 +45,7 @@ describe Api::V1::NotesController, type: :controller do
 
         context 'when fetching notes with page size' do
           before do
-            user_notes.first(page_size)
+            user_notes
             get :index, params: { page_size: page_size }
           end
 
@@ -54,7 +54,7 @@ describe Api::V1::NotesController, type: :controller do
 
         context 'when fetching notes with page and page size' do
           before do
-            user_notes.first(page_size)
+            user_notes
             get :index, params: { page: page, page_size: page_size }
           end
 
