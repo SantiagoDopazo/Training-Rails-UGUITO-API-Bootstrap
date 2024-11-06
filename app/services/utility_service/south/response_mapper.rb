@@ -30,11 +30,11 @@ module UtilityService
           {
             id: note['Id'],
             title: note['TituloNota'],
-            note_type: note['ReseniaNota'] ? 'review' : 'critique',
+            note_type: transform_note_type(note),
             created_at: note['FechaCreacionNota'],
             content: note['Contenido'],
+            user: map_note_user(note),
             book: map_note_book(note)
-            #user: map_note_user(note)
           }
         end
       end
@@ -47,11 +47,28 @@ module UtilityService
         }
       end
 
-      def map_note_user
+      def map_note_user(note)
         {
+          first_name: first_name_selector(note),
+          last_name: last_name_selector(note),
           email: note['EmailAutor']
-
         }
+      end
+
+      def transform_note_type(note)
+        note['ReseniaNota'] ? 'review' : 'critique'
+      end
+
+      def divide_name(note)
+        note['NombreCompletoAutor'].split
+      end
+
+      def first_name_selector(note)
+        divide_name(note).last
+      end
+
+      def last_name_selector(note)
+        divide_name(note).first
       end
     end
   end

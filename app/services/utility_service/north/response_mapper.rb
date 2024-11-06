@@ -30,13 +30,21 @@ module UtilityService
           {
             id: note['id'],
             title: note['titulo'],
-            #type: map_note_type[note['tipo']],
+            type: map_note_type[note['tipo'], 'critique'],
             created_at: note['fecha_creacion'],
             content: note['contenido'],
-            #user: map_note_user(note),
+            user: map_note_user(note['autor']),
             book: map_note_book(note['libro'])
           }
         end
+      end
+
+      def map_note_type
+        {
+          'opinion' => 'critique',
+          'resenia' => 'review',
+          'critica' => 'critique'
+        }
       end
 
       def map_note_book(book)
@@ -44,6 +52,14 @@ module UtilityService
           title: book['titulo'],
           author: book['autor'],
           genre: book['genero']
+        }
+      end
+
+      def map_note_user(user)
+        {
+          email: user.dig('datos_de_contacto', 'email'),
+          first_name: user.dig('datos_personales', 'nombre'),
+          last_name: user.dig('datos_personales', 'apellido')
         }
       end
     end
