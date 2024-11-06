@@ -30,7 +30,7 @@ module UtilityService
           {
             id: note['id'],
             title: note['titulo'],
-            type: map_note_type[note['tipo'], 'critique'],
+            type: map_note_type.fetch(note['tipo'], 'critique'),
             created_at: note['fecha_creacion'],
             content: note['contenido'],
             user: map_note_user(note['autor']),
