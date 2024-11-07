@@ -2,7 +2,7 @@ module Api
   module V1
     class NotesController < ApplicationController
       def index
-        return render_invalid_note_type if invalid_note_type?
+        return render_invalid_note_type unless valid_note_type?
         render json: notes_filtered, status: :ok, each_serializer: IndexNoteSerializer
       end
 
@@ -16,7 +16,7 @@ module Api
         Note.all
       end
 
-      def invalid_note_type?
+      def valid_note_type?
         note_type_present? && note_type_ok?
       end
 
@@ -25,7 +25,7 @@ module Api
       end
 
       def note_type_ok?
-        !Note.note_types.keys.include?(params[:note_type])
+        Note.note_types.keys.include?(params[:note_type])
       end
 
       def notes_filtered
