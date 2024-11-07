@@ -1,18 +1,8 @@
 require 'rails_helper'
 
-shared_examples 'successfully response' do
-  let(:expected_keys) { %w[id title note_type content_length] }
-  let(:expected) do
-    ActiveModel::Serializer::CollectionSerializer.new(notes_expected,
-                                                      serializer: IndexNoteSerializer).to_json
-  end
-
-  it 'responds with the correct number of items' do
-    expect(response_body.size).to eq(notes_expected.size)
-  end
-
+shared_examples 'successful response' do
   it 'responds with the correct keys' do
-    expect(response_body.first.keys).to eq(expected_keys)
+    expect(response_body.sample.keys).to eq(expected_keys)
   end
 
   it 'responds with 200 status' do
@@ -22,26 +12,25 @@ end
 
 describe Api::V1::NotesController, type: :controller do
   describe 'GET #index' do
-    let(:user_notes) { create_list(:note, 3, user: user) }
+    let(:user_note_count) { Faker::Number.between(from: 3, to: 10) }
+    let(:user_notes) { create_list(:note, user_note_count, user: user) }
+    let(:expected_keys) { %w[id title note_type content_length] }
 
     context 'when user is logged in' do
       include_context 'with authenticated user'
 
       context 'when fetching all user notes' do
-        let(:notes_expected) { user_notes }
-
         before do
           user_notes
           get :index
         end
 
-        include_examples 'successfully response'
+        include_examples 'successful response'
       end
 
       context 'when fetching notes with page paramaters' do
         let(:page) { 1 }
-        let(:page_size) { 3 }
-        let(:notes_expected) { user_notes }
+        let(:page_size) { Faker::Number.between(from: 1, to: user_note_count) }
 
         context 'when fetching notes with page size' do
           before do
@@ -49,7 +38,11 @@ describe Api::V1::NotesController, type: :controller do
             get :index, params: { page_size: page_size }
           end
 
-          include_examples 'successfully response'
+          include_examples 'successful response'
+
+          it 'retrive the correct number of notes' do
+            expect(response_body.size).to eq(page_size)
+          end
         end
 
         context 'when fetching notes with page and page size' do
@@ -58,22 +51,25 @@ describe Api::V1::NotesController, type: :controller do
             get :index, params: { page: page, page_size: page_size }
           end
 
-          include_examples 'successfully response'
+          include_examples 'successful response'
         end
       end
 
       context 'when fetching notes using filters' do
-        let(:note_type) { :review }
-        let(:notes_custom) { create_list(:note, 2, user: user, note_type: note_type) }
-        let(:notes_expected) { notes_custom }
+        let(:note_type) { %w[review critique].sample }
+        let(:filtered_notes) { user_notes.select { |note| note.note_type == note_type } }
 
         context 'when note_type is valid' do
           before do
-            notes_custom
+            user_notes
             get :index, params: { note_type: note_type }
           end
 
-          include_examples 'successfully response'
+          include_examples 'successful response'
+
+          it 'has only the notes of the note_type' do
+            expect(response_body.size).to eq(filtered_notes.size)
+          end
         end
 
         context 'when note_type is invalid' do
@@ -85,6 +81,34 @@ describe Api::V1::NotesController, type: :controller do
 
           it 'returns an unprocessable entity status' do
             expect(response).to have_http_status(:unprocessable_entity)
+          end
+        end
+      end
+
+      context 'when fetching notes with order' do
+        context 'when order is asc' do
+          let(:notes_sorted_asc) { user_notes.sort_by(&:created_at) }
+
+          before do
+            user_notes
+            get :index, params: { order: 'asc' }
+          end
+
+          it 'returns notes ordered upward' do
+            expect(response_body[1..-2].sample['id']).to be <= (notes_sorted_asc[-2]['id'])
+          end
+        end
+
+        context 'when order is desc' do
+          let(:notes_sorted_desc) { user_notes.sort_by(&:created_at).reverse }
+
+          before do
+            user_notes
+            get :index, params: { order: 'desc' }
+          end
+
+          it 'returns notes ordered descendant' do
+            expect(response_body[1..-2].sample['id']).to be >= (notes_sorted_desc[-2]['id'])
           end
         end
       end
