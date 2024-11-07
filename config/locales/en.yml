@@ -30,5 +30,6 @@
 # available at http://guides.rubyonrails.org/i18n.html.
 
 en:
-  hello: "Hello world"
-  error_review_lenght: "Review content must not be longer than %{limit} words"
+  hello: 'Hello world'
+  error_review_lenght: 'Review content must not be longer than %{limit} words'
+  error_note_type_invalid: 'Invalid note type'
