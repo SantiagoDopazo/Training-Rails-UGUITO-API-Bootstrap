@@ -42,7 +42,7 @@ ActiveAdmin.register Book do
   form do |f|
     f.inputs do
       f.input :utility
-      f.input :user
+      f.input :user, as: :select, collection: User.all.map { |user| [user.email.to_s, user.id] }
       f.input :genre
       f.input :author
       f.input :image
