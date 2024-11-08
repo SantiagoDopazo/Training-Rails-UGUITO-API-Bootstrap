@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: get
-    uri: https://private-1971b-widergytrainingsouthutilityapi.apiary-mock.com/Notas?Autor=%20
+    uri: https://private-1971b-widergytrainingsouthutilityapi.apiary-mock.com/Notas?Autor=J.K.%20Rowling
     body:
       encoding: US-ASCII
       string: ''
@@ -35,13 +35,13 @@ http_interactions:
       Access-Control-Max-Age:
       - '10'
       X-Apiary-Transaction-Id:
-      - 672bdc7700362600a8c353db
+      - 672e27595ad9d500a0e85d02
       Date:
-      - Wed, 06 Nov 2024 21:15:36 GMT
+      - Fri, 08 Nov 2024 14:59:37 GMT
       Connection:
       - keep-alive
       Akamai-Grn:
-      - 0.1c0fc417.1730927734.15ec0e1e
+      - 0.c7f71202.1731077976.2edf0b1f
     body:
       encoding: UTF-8
       string: |-
@@ -85,5 +85,5 @@ http_interactions:
                 }
             ]
         }
-  recorded_at: Wed, 06 Nov 2024 21:15:36 GMT
+  recorded_at: Fri, 08 Nov 2024 14:59:37 GMT
 recorded_with: VCR 6.2.0

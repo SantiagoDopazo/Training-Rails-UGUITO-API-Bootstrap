@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: get
-    uri: https://private-bfc6a-widergytrainingnorthutilityapi.apiary-mock.com/notas?autor=%20
+    uri: https://private-bfc6a-widergytrainingnorthutilityapi.apiary-mock.com/notas?autor=J.K.%20Rowling
     body:
       encoding: US-ASCII
       string: ''
@@ -21,7 +21,7 @@ http_interactions:
       Content-Type:
       - application/json
       Content-Length:
-      - '3158'
+      - '3150'
       X-Apiary-Ratelimit-Limit:
       - '120'
       X-Apiary-Ratelimit-Remaining:
@@ -35,20 +35,20 @@ http_interactions:
       Access-Control-Max-Age:
       - '10'
       X-Apiary-Transaction-Id:
-      - 672bde415943cd00988d0cd2
+      - 672e0db500362600a8c62467
       Date:
-      - Wed, 06 Nov 2024 21:23:13 GMT
+      - Fri, 08 Nov 2024 13:10:13 GMT
       Connection:
       - keep-alive
       Akamai-Grn:
-      - 0.050fc417.1730928192.d17727
+      - 0.c7f71202.1731071412.2e438d39
     body:
       encoding: UTF-8
       string: "{\n    \"notas\": [\n        {\n            \"id\": 1,\n            \"titulo\":
         \"Opinion personal\",\n            \"tipo\": \"opinion\",\n            \"contenido\":
         \"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum commodo
         nulla at eros sollicitudin, vel feugiat nibh malesuada. Fusce vel ante vel
-        dolor convallis ultrices.\",                    \"fecha_creacion\": \"2022-05-20T14:20:55-03:00\",\n
+        dolor convallis ultrices.\",\n            \"fecha_creacion\": \"2022-05-20T14:20:55-03:00\",\n
         \           \"autor\": {\n                \"datos_de_contacto\": {\n                    \"email\":
         \"albertogomez@north.com\",\n                    \"telefono\": \"11-2233-4455\"\n
         \               },\n                \"datos_personales\": {\n                    \"nro_documento\":
@@ -58,7 +58,7 @@ http_interactions:
         \               \"fecha_creacion\": \"2022-05-20T14:20:55-03:00\",\n                \"autor\":
         \"J.K.Rowling\",\n                \"genero\": \"fantasia\",\n                \"imagen_url\":
         \"https://some_url.com\",\n                \"editorial\": \"Nice Books\",\n
-        \               \"año\": \"1997\"\n            }\n\n        },\n        {\n
+        \               \"año\": \"1997\"\n            }\n        },\n        {\n
         \           \"id\": 2,\n            \"titulo\": \"Reseña\",\n            \"contenido\":
         \"Lorem impsun dolor consectetur bla.\",\n            \"tipo\": \"resenia\",\n
         \           \"fecha_creacion\": \"2022-05-20T14:20:55-03:00\",\n            \"autor\":
@@ -85,5 +85,5 @@ http_interactions:
         \"fantasia\",\n                \"imagen_url\": \"https://some_url.com\",\n
         \               \"editorial\": \"Nice Books\",\n                \"año\": \"2001\"\n
         \           }\n        }\n    ]\n}"
-  recorded_at: Wed, 06 Nov 2024 21:23:13 GMT
+  recorded_at: Fri, 08 Nov 2024 13:10:13 GMT
 recorded_with: VCR 6.2.0

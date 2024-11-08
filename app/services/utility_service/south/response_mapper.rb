@@ -30,7 +30,7 @@ module UtilityService
           {
             id: note['Id'],
             title: note['TituloNota'],
-            note_type: transform_note_type(note),
+            type: transform_note_type(note),
             created_at: note['FechaCreacionNota'],
             content: note['Contenido'],
             user: map_note_user(note),
