@@ -1,6 +1,8 @@
 module Api
   module V1
     class NotesController < ApplicationController
+      before_action :authenticate_user!
+
       def index
         return render_invalid_note_type unless valid_note_type?
         render json: notes_filtered, status: :ok, each_serializer: IndexNoteSerializer
@@ -13,7 +15,7 @@ module Api
       private
 
       def notes
-        Note.all
+        current_user.notes
       end
 
       def valid_note_type?
