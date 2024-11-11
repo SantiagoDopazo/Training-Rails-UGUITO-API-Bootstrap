@@ -74,7 +74,6 @@ module Api
       end
 
       def correct_note_type?
-        byebug
         Note.note_types.keys.include?(params[:note][:note_type])
       end
     end
