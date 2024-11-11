@@ -106,14 +106,16 @@ describe Api::V1::NotesController, type: :controller do
   end
 
   describe 'POST #create' do
-    let(:note_params) { { title: 'New Note', note_type: 'review', content: 'Sample content' } }
+    subject(:create_note) { post :create, params: { note: note_params } }
+
+    let(:note_params) { attributes_for(:note) }
 
     context 'when user is logged in' do
       include_context 'with authenticated user'
 
-      context 'when parameters are valid' do
-        before { post :create, params: { note: note_params } }
+      before { create_note }
 
+      context 'when parameters are valid' do
         it 'creates a new note' do
           expect(Note.count).to eq(1)
         end
@@ -128,10 +130,10 @@ describe Api::V1::NotesController, type: :controller do
       end
 
       context 'when note_type is invalid' do
-        before { post :create, params: { note: note_params.merge(note_type: 'invalid_type') } }
+        let(:note_params) { attributes_for(:note, note_type: 'invalid') }
 
         it 'does not create a note' do
-          expect(Note.count).to eq(0)
+          expect { create_note }.not_to change(Note, :count)
         end
 
         it 'responds with an error message' do
@@ -144,7 +146,8 @@ describe Api::V1::NotesController, type: :controller do
       end
 
       context 'when a required parameter is missing' do
-        before { post :create, params: { note: note_params.except(:title) } }
+        let(:obligatory_params) { %i[title note_type content] }
+        let(:note_params) { attributes_for(:note).except(obligatory_params.sample) }
 
         it 'does not create a note' do
           expect(Note.count).to eq(0)

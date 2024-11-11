@@ -48,7 +48,7 @@ module Api
 
       def note_params
         params.require(:note).require(%i[title note_type content])
-        params.permit(note: %i[title note_type content])[:note].to_h
+        params.require(:note).permit(%i[title note_type content])
       end
 
       def respond_invalid_record
@@ -74,6 +74,7 @@ module Api
       end
 
       def correct_note_type?
+        byebug
         Note.note_types.keys.include?(params[:note][:note_type])
       end
     end
