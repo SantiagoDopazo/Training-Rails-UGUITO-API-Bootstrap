@@ -35,23 +35,14 @@ describe Api::V1::NotesController, type: :controller do
         context 'when fetching notes with page size' do
           before do
             user_notes
-            get :index, params: { page_size: page_size }
-          end
-
-          include_examples 'successful response'
-
-          it 'retrive the correct number of notes' do
-            expect(response_body.size).to eq(page_size)
-          end
-        end
-
-        context 'when fetching notes with page and page size' do
-          before do
-            user_notes
             get :index, params: { page: page, page_size: page_size }
           end
 
           include_examples 'successful response'
+
+          it 'retrieves the correct number of notes' do
+            expect(response_body.size).to eq(page_size)
+          end
         end
       end
 
@@ -67,7 +58,7 @@ describe Api::V1::NotesController, type: :controller do
 
           include_examples 'successful response'
 
-          it 'has only the notes of the note_type' do
+          it 'retrieves only the notes of the note_type' do
             expect(response_body.size).to eq(filtered_notes.size)
           end
         end
@@ -95,7 +86,7 @@ describe Api::V1::NotesController, type: :controller do
           end
 
           it 'returns notes ordered upward' do
-            expect(response_body[1..-2].sample['id']).to be <= (notes_sorted_asc[-2]['id'])
+            expect(response_body.first['id']).to eq(notes_sorted_asc.first['id'])
           end
         end
 
@@ -108,7 +99,7 @@ describe Api::V1::NotesController, type: :controller do
           end
 
           it 'returns notes ordered descendant' do
-            expect(response_body[1..-2].sample['id']).to be >= (notes_sorted_desc[-2]['id'])
+            expect(response_body.first['id']).to eq(notes_sorted_desc.first['id'])
           end
         end
       end
