@@ -60,7 +60,6 @@ describe Api::V1::NotesController, type: :controller do
           let(:note_type) { 'invalid_note_type' }
 
           it 'returns an unprocessable entity status' do
-            byebug
             expect(response).to have_http_status(:unprocessable_entity)
           end
         end
@@ -162,6 +161,7 @@ describe Api::V1::NotesController, type: :controller do
         end
 
         it 'responds with an error message' do
+          byebug
           expect(response_body['error']).to eq(I18n.t('controller.note_invalid_type'))
         end
 
