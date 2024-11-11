@@ -30,7 +30,7 @@ module UtilityService
           {
             id: note['id'],
             title: note['titulo'],
-            type: map_note_type.fetch(note['tipo'], 'critique'),
+            type: map_note_type(note['tipo']),
             created_at: note['fecha_creacion'],
             content: note['contenido'],
             user: map_note_user(note['autor']),
@@ -39,12 +39,14 @@ module UtilityService
         end
       end
 
-      def map_note_type
-        {
-          'opinion' => 'critique',
-          'resenia' => 'review',
-          'critica' => 'critique'
-        }
+      NOTE_TYPE_MAP = {
+        'opinion' => 'critique',
+        'resenia' => 'review',
+        'critica' => 'critique'
+      }.freeze
+
+      def map_note_type(note_type)
+        NOTE_TYPE_MAP.fetch(note_type, 'critique')
       end
 
       def map_note_book(book)
