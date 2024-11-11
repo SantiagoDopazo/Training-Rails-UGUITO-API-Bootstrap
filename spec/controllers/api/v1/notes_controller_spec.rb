@@ -12,6 +12,7 @@ end
 
 describe Api::V1::NotesController, type: :controller do
   describe 'GET #index' do
+
     let(:user_note_count) { Faker::Number.between(from: 3, to: 10) }
     let(:user_notes) { create_list(:note, user_note_count, user: user) }
     let(:expected_keys) { %w[id title note_type content_length] }
@@ -19,11 +20,13 @@ describe Api::V1::NotesController, type: :controller do
     context 'when user is logged in' do
       include_context 'with authenticated user'
 
+      before do
+        user_notes
+        get :index, params: params
+      end
+
       context 'when fetching all user notes' do
-        before do
-          user_notes
-          get :index
-        end
+        let(:params) { nil }
 
         include_examples 'successful response'
       end
@@ -31,30 +34,21 @@ describe Api::V1::NotesController, type: :controller do
       context 'when fetching notes with page paramaters' do
         let(:page) { 1 }
         let(:page_size) { Faker::Number.between(from: 1, to: user_note_count) }
+        let(:params) { { page: page, page_size: page_size } }
 
-        context 'when fetching notes with page size' do
-          before do
-            user_notes
-            get :index, params: { page: page, page_size: page_size }
-          end
+        include_examples 'successful response'
 
-          include_examples 'successful response'
-
-          it 'retrieves the correct number of notes' do
-            expect(response_body.size).to eq(page_size)
-          end
+        it 'retrieves the correct number of notes' do
+          expect(response_body.size).to eq(page_size)
         end
       end
 
       context 'when fetching notes using filters' do
-        let(:note_type) { %w[review critique].sample }
         let(:filtered_notes) { user_notes.select { |note| note.note_type == note_type } }
+        let(:params) { { note_type: note_type } }
 
         context 'when note_type is valid' do
-          before do
-            user_notes
-            get :index, params: { note_type: note_type }
-          end
+          let(:note_type) { %w[review critique].sample }
 
           include_examples 'successful response'
 
@@ -64,11 +58,7 @@ describe Api::V1::NotesController, type: :controller do
         end
 
         context 'when note_type is invalid' do
-          let(:invalid_note_type) { 'invalid' }
-
-          before do
-            get :index, params: { note_type: invalid_note_type }
-          end
+          let(:note_type) { 'invalid_note_type' }
 
           it 'returns an unprocessable entity status' do
             expect(response).to have_http_status(:unprocessable_entity)
@@ -79,11 +69,7 @@ describe Api::V1::NotesController, type: :controller do
       context 'when fetching notes with order' do
         context 'when order is asc' do
           let(:notes_sorted_asc) { user_notes.sort_by(&:created_at) }
-
-          before do
-            user_notes
-            get :index, params: { order: 'asc' }
-          end
+          let(:params) { { order: 'asc' } }
 
           it 'returns notes ordered upward' do
             expect(response_body.first['id']).to eq(notes_sorted_asc.first['id'])
@@ -92,11 +78,7 @@ describe Api::V1::NotesController, type: :controller do
 
         context 'when order is desc' do
           let(:notes_sorted_desc) { user_notes.sort_by(&:created_at).reverse }
-
-          before do
-            user_notes
-            get :index, params: { order: 'desc' }
-          end
+          let(:params) { { order: 'desc' } }
 
           it 'returns notes ordered descendant' do
             expect(response_body.first['id']).to eq(notes_sorted_desc.first['id'])
@@ -117,10 +99,11 @@ describe Api::V1::NotesController, type: :controller do
       include_context 'with authenticated user'
       let(:expected) { ShowNoteSerializer.new(note).to_json }
 
+      before { get :show, params: params }
+
       context 'when fetching a valid note' do
         let(:note) { create(:note, user: user) }
-
-        before { get :show, params: { id: note.id } }
+        let(:params) { { id: note.id } }
 
         it 'responds with the correct number of items' do
           expect(response_body.to_json.size).to eq(expected.size)
@@ -131,8 +114,8 @@ describe Api::V1::NotesController, type: :controller do
         end
       end
 
-      context 'when fetching a invalid note' do
-        before { get :show, params: { id: Faker::Number.number } }
+      context 'when fetching an invalid note' do
+        let(:params) { { id: Faker::Number.number } }
 
         it 'responds with 404 status' do
           expect(response).to have_http_status(:not_found)
