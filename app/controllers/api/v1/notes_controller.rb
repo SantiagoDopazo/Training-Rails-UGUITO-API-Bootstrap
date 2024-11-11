@@ -60,7 +60,7 @@ module Api
       end
 
       def validate_note_type
-        render_invalid_note_type unless correct_note_type?
+        render_invalid_note_type unless correct_note_type? || !note_type_present?
       end
 
       def error_review_length
@@ -75,6 +75,10 @@ module Api
 
       def correct_note_type?
         Note.note_types.keys.include?(params[:note][:note_type])
+      end
+
+      def note_type_present?
+        params[:note][:note_type].present?
       end
     end
   end

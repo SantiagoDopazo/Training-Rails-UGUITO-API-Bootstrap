@@ -12,7 +12,6 @@ end
 
 describe Api::V1::NotesController, type: :controller do
   describe 'GET #index' do
-
     let(:user_note_count) { Faker::Number.between(from: 3, to: 10) }
     let(:user_notes) { create_list(:note, user_note_count, user: user) }
     let(:expected_keys) { %w[id title note_type content_length] }
@@ -61,6 +60,7 @@ describe Api::V1::NotesController, type: :controller do
           let(:note_type) { 'invalid_note_type' }
 
           it 'returns an unprocessable entity status' do
+            byebug
             expect(response).to have_http_status(:unprocessable_entity)
           end
         end
@@ -155,10 +155,10 @@ describe Api::V1::NotesController, type: :controller do
       end
 
       context 'when note_type is invalid' do
-        let(:note_params) { attributes_for(:note, note_type: 'invalid') }
+        let(:note_params) { attributes_for(:note, note_type: 'invalid_type') }
 
         it 'does not create a note' do
-          expect { create_note }.not_to change(Note, :count)
+          expect(Note.count).to eq(0)
         end
 
         it 'responds with an error message' do
