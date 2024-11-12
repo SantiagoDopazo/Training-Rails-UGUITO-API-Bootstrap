@@ -5,6 +5,7 @@ describe Api::V1::NotesController, type: :controller do
     let(:user_note_count) { Faker::Number.between(from: 3, to: 10) }
     let(:user_notes) { create_list(:note, user_note_count, user: user) }
     let(:expected_keys) { %w[id title note_type content_length] }
+    let(:respond_keys) { response_body.sample.keys }
 
     context 'when user is logged in' do
       include_context 'with authenticated user'
@@ -98,10 +99,15 @@ describe Api::V1::NotesController, type: :controller do
 
       before { get :show, params: params }
 
+      let(:expected_keys) { %w[id title note_type word_count created_at content content_length user] }
+      let(:respond_keys) { response_body.keys }
+
       context 'when fetching a valid note' do
         let(:note) { create(:note, user: user) }
         let(:params) { { id: note.id } }
         let(:record) { note }
+
+        include_examples 'successful response'
 
         it_behaves_like 'basic show endpoint'
       end
