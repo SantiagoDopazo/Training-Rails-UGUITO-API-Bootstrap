@@ -19,7 +19,7 @@ module Api
       end
 
       def valid_note_type?
-        note_type_present? && note_type_ok?
+        !note_type_present? || note_type_ok?
       end
 
       def note_type_present?
@@ -42,7 +42,7 @@ module Api
       end
 
       def render_invalid_note_type
-        render json: { error: I18n.t(:error_note_type_invalid) }
+        render json: { error: I18n.t(:error_note_type_invalid) }, status: :unprocessable_entity
       end
     end
   end
