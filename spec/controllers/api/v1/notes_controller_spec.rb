@@ -137,34 +137,30 @@ describe Api::V1::NotesController, type: :controller do
     context 'when user is logged in' do
       include_context 'with authenticated user'
 
-      before { create_note }
-
       context 'when parameters are valid' do
         it 'creates a new note' do
-          expect(Note.count).to eq(1)
+          expect { create_note }.to change(Note, :count).by(1)
         end
 
         it 'responds with a success message' do
+          create_note
           expect(response_body['message']).to eq(I18n.t('controller.note_create_success'))
         end
 
         it 'responds with 201 status' do
+          create_note
           expect(response).to have_http_status(:created)
         end
       end
 
       context 'when note_type is invalid' do
         let(:note_params) { attributes_for(:note, note_type: 'invalid_type') }
+        let(:message) { I18n.t('controller.note_invalid_type') }
 
-        it 'does not create a note' do
-          expect(Note.count).to eq(0)
-        end
-
-        it 'responds with an error message' do
-          expect(response_body['error']).to eq(I18n.t('controller.note_invalid_type'))
-        end
+        it_behaves_like 'bad note creation'
 
         it 'responds with 422 status' do
+          create_note
           expect(response).to have_http_status(:unprocessable_entity)
         end
       end
@@ -172,16 +168,12 @@ describe Api::V1::NotesController, type: :controller do
       context 'when a required parameter is missing' do
         let(:obligatory_params) { %i[title note_type content] }
         let(:note_params) { attributes_for(:note).except(obligatory_params.sample) }
+        let(:message) { I18n.t('controller.note_parameter_missing') }
 
-        it 'does not create a note' do
-          expect(Note.count).to eq(0)
-        end
-
-        it 'responds with a parameter missing error' do
-          expect(response_body['error']).to eq(I18n.t('controller.note_parameter_missing'))
-        end
+        it_behaves_like 'bad note creation'
 
         it 'responds with 400 status' do
+          create_note
           expect(response).to have_http_status(:bad_request)
         end
       end

@@ -44,15 +44,11 @@ module Api
       end
 
       def valid_note_type?
-        !note_type_present?(params[:note_type]) || note_type_ok?(params[:note_type])
+        params[:note_type].blank? || note_type_ok?(params[:note_type])
       end
 
       def validate_note_type_create
         render_invalid_note_type unless note_type_ok?(note_params[:note_type])
-      end
-
-      def note_type_present?(note_type)
-        note_type.present?
       end
 
       def note_type_ok?(note_type)
