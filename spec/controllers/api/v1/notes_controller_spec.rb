@@ -138,8 +138,16 @@ describe Api::V1::NotesController, type: :controller do
       include_context 'with authenticated user'
 
       context 'when parameters are valid' do
+        let(:note) { Note.last }
+        let(:attributes) { %i[title content note_type].sample }
+
         it 'creates a new note' do
           expect { create_note }.to change(Note, :count).by(1)
+        end
+
+        it 'creates the note with the correct attributes' do
+          create_note
+          expect(note[attributes]).to eq(note_params[attributes])
         end
 
         it 'responds with a success message' do
