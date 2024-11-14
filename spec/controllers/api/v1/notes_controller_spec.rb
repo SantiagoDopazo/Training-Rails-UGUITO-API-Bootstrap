@@ -161,7 +161,6 @@ describe Api::V1::NotesController, type: :controller do
         end
 
         it 'responds with an error message' do
-          byebug
           expect(response_body['error']).to eq(I18n.t('controller.note_invalid_type'))
         end
 

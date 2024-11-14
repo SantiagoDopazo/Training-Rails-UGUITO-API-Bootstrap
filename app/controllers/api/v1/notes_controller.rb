@@ -73,7 +73,8 @@ module Api
       end
 
       def render_invalid_note_type
-        render json: { error: I18n.t('controller.note_invalid_type') }, status: :unprocessable_entity
+        render json: { error: I18n.t('controller.note_invalid_type') },
+               status: :unprocessable_entity
       end
 
       def correct_note_type?
