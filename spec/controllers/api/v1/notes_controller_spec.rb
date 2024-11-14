@@ -105,11 +105,12 @@ describe Api::V1::NotesController, type: :controller do
       context 'when fetching a valid note' do
         let(:note) { create(:note, user: user) }
         let(:params) { { id: note.id } }
-        let(:record) { note }
 
         include_examples 'successful response'
 
-        it_behaves_like 'basic show endpoint'
+        it 'returns the desired record' do
+          expect(note.class.find(response_body['id'])).to eq(note)
+        end
       end
 
       context 'when fetching an invalid note' do
