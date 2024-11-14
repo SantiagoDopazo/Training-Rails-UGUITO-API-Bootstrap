@@ -1,20 +1,11 @@
 require 'rails_helper'
 
-shared_examples 'successful response' do
-  it 'responds with the correct keys' do
-    expect(response_body.sample.keys).to eq(expected_keys)
-  end
-
-  it 'responds with 200 status' do
-    expect(response).to have_http_status(:ok)
-  end
-end
-
 describe Api::V1::NotesController, type: :controller do
   describe 'GET #index' do
     let(:user_note_count) { Faker::Number.between(from: 3, to: 10) }
     let(:user_notes) { create_list(:note, user_note_count, user: user) }
     let(:expected_keys) { %w[id title note_type content_length] }
+    let(:respond_keys) { response_body.sample.keys }
 
     context 'when user is logged in' do
       include_context 'with authenticated user'
@@ -28,17 +19,26 @@ describe Api::V1::NotesController, type: :controller do
         let(:params) { nil }
 
         include_examples 'successful response'
+
+        it 'retrieves all the notes of the user' do
+          expect(response_body.size).to eq(user_notes.size)
+        end
       end
 
       context 'when fetching notes with page paramaters' do
         let(:page) { 1 }
         let(:page_size) { Faker::Number.between(from: 1, to: user_note_count) }
         let(:params) { { page: page, page_size: page_size } }
+        let(:expected_notes) { user_notes.first(page_size) }
 
         include_examples 'successful response'
 
         it 'retrieves the correct number of notes' do
-          expect(response_body.size).to eq(page_size)
+          expect(response_body.size).to eq([page_size, user_notes.size].min)
+        end
+
+        it 'retrieves notes corresponding to the first page' do
+          expect(response_body.map { |note| note['id'] }).to eq(expected_notes.map(&:id))
         end
       end
 
@@ -96,20 +96,20 @@ describe Api::V1::NotesController, type: :controller do
   describe 'GET #show' do
     context 'when user is logged in' do
       include_context 'with authenticated user'
-      let(:expected) { ShowNoteSerializer.new(note).to_json }
 
       before { get :show, params: params }
+
+      let(:expected_keys) { %w[id title note_type word_count created_at content content_length user] }
+      let(:respond_keys) { response_body.keys }
 
       context 'when fetching a valid note' do
         let(:note) { create(:note, user: user) }
         let(:params) { { id: note.id } }
 
-        it 'responds with the correct number of items' do
-          expect(response_body.to_json.size).to eq(expected.size)
-        end
+        include_examples 'successful response'
 
-        it 'responds with 200 status' do
-          expect(response).to have_http_status(:ok)
+        it 'returns the desired record' do
+          expect(note.class.find(response_body['id'])).to eq(note)
         end
       end
 
