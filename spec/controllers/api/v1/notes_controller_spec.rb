@@ -193,4 +193,25 @@ describe Api::V1::NotesController, type: :controller do
       it_behaves_like 'unauthorized'
     end
   end
+
+  describe 'GET #index_async' do
+    context 'when user is logged in' do
+      include_context 'with authenticated user'
+
+      let(:author) { Faker::Book.author }
+      let(:params) { { author: author } }
+      let(:worker_name) { 'RetrieveNotesWorker' }
+      let(:parameters) { [user.id, params] }
+
+      before { get :index_async, params: params }
+
+      it_behaves_like 'basic endpoint with polling'
+    end
+
+    context 'when the user is not authenticated' do
+      before { get :index_async }
+
+      it_behaves_like 'unauthorized'
+    end
+  end
 end

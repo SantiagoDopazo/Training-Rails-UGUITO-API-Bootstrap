@@ -25,7 +25,7 @@ http_interactions:
       X-Apiary-Ratelimit-Limit:
       - '120'
       X-Apiary-Ratelimit-Remaining:
-      - '119'
+      - '118'
       Access-Control-Allow-Origin:
       - "*"
       Access-Control-Allow-Methods:
@@ -35,13 +35,13 @@ http_interactions:
       Access-Control-Max-Age:
       - '10'
       X-Apiary-Transaction-Id:
-      - 64d0ecd7602661007b7a1991
+      - 672bdca2a0017b00ac0a32ee
       Date:
-      - Mon, 07 Aug 2023 13:08:39 GMT
+      - Wed, 06 Nov 2024 21:16:18 GMT
       Connection:
       - keep-alive
       Akamai-Grn:
-      - 0.1295c017.1691413718.1edb8b60
+      - 0.1c0fc417.1730927777.15ecdf90
     body:
       encoding: UTF-8
       string: |-
@@ -76,5 +76,5 @@ http_interactions:
                 }
             ]
         }
-  recorded_at: Mon, 07 Aug 2023 13:08:39 GMT
+  recorded_at: Wed, 06 Nov 2024 21:16:18 GMT
 recorded_with: VCR 6.2.0
