@@ -21,6 +21,7 @@ Rails.application.routes.draw do
     resource :users do
       get :current
     end
+
     resources :notes, only: %i[index show create]do
       collection do
         get :async, to: 'notes#index_async'
@@ -114,6 +115,8 @@ end
 #                                    PUT        /api/v1/users(.:format)                                                                           api/v1/users#update {:format=>:json}
 #                                    DELETE     /api/v1/users(.:format)                                                                           api/v1/users#destroy {:format=>:json}
 #                                    POST       /api/v1/users(.:format)                                                                           api/v1/users#create {:format=>:json}
+#                       api_v1_notes GET        /api/v1/notes(.:format)                                                                           api/v1/notes#index {:format=>:json}
+#                        api_v1_note GET        /api/v1/notes/:id(.:format)                                                                       api/v1/notes#show {:format=>:json}
 #                                    GET        /async_request/jobs/:id(.:format)                                                                 async_request/jobs#show
 #                        sidekiq_web            /sidekiq                                                                                          Sidekiq::Web
 #                            pg_hero            /pghero                                                                                           PgHero::Engine

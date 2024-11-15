@@ -20,9 +20,13 @@ class Note < ApplicationRecord
   belongs_to :user
   has_one :utility, through: :user
 
+  scope :by_note_type, ->(note_type) { where({ note_type: note_type }.compact) }
+  scope :ordered_by, ->(order) { order({ created_at: order }.compact) }
+  scope :paginated, ->(page, page_size) { page(page).per(page_size) }
+
   def validate_review_word_limit
     return unless review? && word_count > utility.short_content
-    errors.add(:length, I18n.t('model.error_review_length', { limit: utility.short_content }))
+    errors.add(:length, I18n.t(:error_review_lenght, { limit: utility.short_content }))
   end
 
   def word_count

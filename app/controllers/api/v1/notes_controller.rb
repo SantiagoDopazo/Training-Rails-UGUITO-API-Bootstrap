@@ -8,7 +8,8 @@ module Api
       before_action :validate_note_type, only: :create
 
       def index
-        render json: notes_paginated, status: :ok, each_serializer: IndexNoteSerializer
+        return render_invalid_note_type unless valid_note_type?
+        render json: notes_filtered, status: :ok, each_serializer: IndexNoteSerializer
       end
 
       def show
@@ -31,20 +32,23 @@ module Api
         current_user.notes
       end
 
+      def valid_note_type?
+        !note_type_present? || note_type_ok?
+      end
+
+      def note_type_present?
+        params[:note_type].present?
+      end
+
+      def note_type_ok?
+        Note.note_types.keys.include?(params[:note_type])
+      end
+
       def notes_filtered
-        notes.where(filtering_params)
-      end
-
-      def notes_paginated
-        notes_filtered.order(ordering_params).page(params[:page]).per(params[:page_size])
-      end
-
-      def ordering_params
-        { created_at: params[:order] || 'asc' }
-      end
-
-      def filtering_params
-        params.permit(%i[note_type])
+        notes
+          .by_note_type(params[:note_type])
+          .ordered_by(params[:order])
+          .paginated(params[:page], params[:page_size])
       end
 
       def show_note
