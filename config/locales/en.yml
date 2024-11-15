@@ -31,11 +31,8 @@
 
 en:
   hello: "Hello world"
-<<<<<<< HEAD
   active_admin:
     clone_model: 'Clone %{model}'
-=======
->>>>>>> master
   model:
     error_review_length: 'A review cannot exceed %{limit} words.'
   controller:
