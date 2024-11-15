@@ -5,7 +5,7 @@ module Api
 
       rescue_from ActiveRecord::RecordInvalid, with: :respond_invalid_record
       rescue_from ActionController::ParameterMissing, with: :parameter_missing
-      before_action :validate_note_type, only: :create
+      before_action :validate_note_type_create, only: :create
 
       def index
         return render_invalid_note_type unless valid_note_type?
@@ -32,18 +32,6 @@ module Api
         current_user.notes
       end
 
-      def valid_note_type?
-        !note_type_present? || note_type_ok?
-      end
-
-      def note_type_present?
-        params[:note_type].present?
-      end
-
-      def note_type_ok?
-        Note.note_types.keys.include?(params[:note_type])
-      end
-
       def notes_filtered
         notes
           .by_note_type(params[:note_type])
@@ -57,7 +45,23 @@ module Api
 
       def note_params
         params.require(:note).require(%i[title note_type content])
-        params.permit(note: %i[title note_type content])[:note].to_h
+        params.require(:note).permit(%i[title note_type content])
+      end
+
+      def index_async_params
+        { author: params.require(:author) }
+      end
+
+      def valid_note_type?
+        params[:note_type].blank? || note_type_ok?(params[:note_type])
+      end
+
+      def validate_note_type_create
+        render_invalid_note_type unless note_type_ok?(note_params[:note_type])
+      end
+
+      def note_type_ok?(note_type)
+        Note.note_types.keys.include?(note_type)
       end
 
       def respond_invalid_record
@@ -68,26 +72,14 @@ module Api
         render json: { error: I18n.t('controller.note_parameter_missing') }, status: :bad_request
       end
 
-      def validate_note_type
-        render_invalid_note_type unless correct_note_type?
+      def render_invalid_note_type
+        render json: { error: I18n.t('controller.note_invalid_type') },
+               status: :unprocessable_entity
       end
 
       def error_review_length
         { error: I18n.t('model.error_review_length',
                         { limit: current_user.utility.short_content }) }
-      end
-
-      def render_invalid_note_type
-        render json:
-          { error: I18n.t('controller.note_invalid_type') }, status: :unprocessable_entity
-      end
-
-      def correct_note_type?
-        Note.note_types.keys.include?(params[:note][:note_type])
-      end
-
-      def index_async_params
-        { author: params.require(:author) }
       end
     end
   end

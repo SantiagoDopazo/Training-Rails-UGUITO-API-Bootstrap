@@ -93,68 +93,6 @@ describe Api::V1::NotesController, type: :controller do
     end
   end
 
-  describe 'POST #create' do
-    let(:note_params) { { title: 'New Note', note_type: 'review', content: 'Sample content' } }
-
-    context 'when user is logged in' do
-      include_context 'with authenticated user'
-
-      context 'when parameters are valid' do
-        before { post :create, params: { note: note_params } }
-
-        it 'creates a new note' do
-          expect(Note.count).to eq(1)
-        end
-
-        it 'responds with a success message' do
-          expect(response_body['message']).to eq(I18n.t('controller.note_create_success'))
-        end
-
-        it 'responds with 201 status' do
-          expect(response).to have_http_status(:created)
-        end
-      end
-
-      context 'when note_type is invalid' do
-        before { post :create, params: { note: note_params.merge(note_type: 'invalid_type') } }
-
-        it 'does not create a note' do
-          expect(Note.count).to eq(0)
-        end
-
-        it 'responds with an error message' do
-          expect(response_body['error']).to eq(I18n.t('controller.note_invalid_type'))
-        end
-
-        it 'responds with 422 status' do
-          expect(response).to have_http_status(:unprocessable_entity)
-        end
-      end
-
-      context 'when a required parameter is missing' do
-        before { post :create, params: { note: note_params.except(:title) } }
-
-        it 'does not create a note' do
-          expect(Note.count).to eq(0)
-        end
-
-        it 'responds with a parameter missing error' do
-          expect(response_body['error']).to eq(I18n.t('controller.note_parameter_missing'))
-        end
-
-        it 'responds with 400 status' do
-          expect(response).to have_http_status(:bad_request)
-        end
-      end
-    end
-
-    context 'when user is not logged in' do
-      before { post :create, params: { note: note_params } }
-
-      it_behaves_like 'unauthorized'
-    end
-  end
-
   describe 'GET #show' do
     context 'when user is logged in' do
       include_context 'with authenticated user'
@@ -185,9 +123,72 @@ describe Api::V1::NotesController, type: :controller do
     end
 
     context 'when there is not a user logged in' do
-      before { get :show, params: params }
+      before { get :show, params: { id: Faker::Number.number } }
 
-      let(:params) { { id: Faker::Number.number } }
+      it_behaves_like 'unauthorized'
+    end
+  end
+
+  describe 'POST #create' do
+    subject(:create_note) { post :create, params: { note: note_params } }
+
+    let(:note_params) { attributes_for(:note) }
+
+    context 'when user is logged in' do
+      include_context 'with authenticated user'
+
+      context 'when parameters are valid' do
+        let(:note) { Note.last }
+        let(:attributes) { %i[title content note_type].sample }
+
+        it 'creates a new note' do
+          expect { create_note }.to change(Note, :count).by(1)
+        end
+
+        it 'creates the note with the correct attributes' do
+          create_note
+          expect(note[attributes]).to eq(note_params[attributes])
+        end
+
+        it 'responds with a success message' do
+          create_note
+          expect(response_body['message']).to eq(I18n.t('controller.note_create_success'))
+        end
+
+        it 'responds with 201 status' do
+          create_note
+          expect(response).to have_http_status(:created)
+        end
+      end
+
+      context 'when note_type is invalid' do
+        let(:note_params) { attributes_for(:note, note_type: 'invalid_type') }
+        let(:message) { I18n.t('controller.note_invalid_type') }
+
+        it_behaves_like 'bad note creation'
+
+        it 'responds with 422 status' do
+          create_note
+          expect(response).to have_http_status(:unprocessable_entity)
+        end
+      end
+
+      context 'when a required parameter is missing' do
+        let(:obligatory_params) { %i[title note_type content] }
+        let(:note_params) { attributes_for(:note).except(obligatory_params.sample) }
+        let(:message) { I18n.t('controller.note_parameter_missing') }
+
+        it_behaves_like 'bad note creation'
+
+        it 'responds with 400 status' do
+          create_note
+          expect(response).to have_http_status(:bad_request)
+        end
+      end
+    end
+
+    context 'when user is not logged in' do
+      before { post :create, params: { note: note_params } }
 
       it_behaves_like 'unauthorized'
     end
