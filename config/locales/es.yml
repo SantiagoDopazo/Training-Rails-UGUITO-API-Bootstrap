@@ -30,6 +30,10 @@
 # available at http://guides.rubyonrails.org/i18n.html.
 
 es:
-  hello: 'Hola Mundo!'
-  error_review_lenght: 'El contenido de review no puede ser mayor a %{limit} palabras'
-  error_note_type_invalid: 'Tipo de nota invalido'
+  hello: "Hola Mundo!"
+  model:
+    error_review_length: "Una reseña no puede exceder %{limit} palabras"
+  controller:
+    note_create_success: 'Nota creada con éxito.'
+    note_invalid_type: 'El tipo de nota no es válido.'
+    note_parameter_missing: 'Faltan parametros requeridos.'
