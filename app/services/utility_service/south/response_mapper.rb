@@ -49,8 +49,8 @@ module UtilityService
 
       def map_note_user(note)
         {
-          first_name: first_name_selector(note),
-          last_name: last_name_selector(note),
+          first_name: first_name(note),
+          last_name: last_name(note),
           email: note['EmailAutor']
         }
       end
@@ -63,12 +63,12 @@ module UtilityService
         note['NombreCompletoAutor'].split
       end
 
-      def first_name_selector(note)
+      def first_name(note)
         divide_name(note).last
       end
 
-      def last_name_selector(note)
-        divide_name(note).first
+      def last_name(note)
+        divide_name(note)[..-1].join(' ')
       end
     end
   end
