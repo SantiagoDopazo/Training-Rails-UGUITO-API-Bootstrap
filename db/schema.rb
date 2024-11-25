@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_10_17_144908) do
+ActiveRecord::Schema.define(version: 2024_11_12_123549) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -115,6 +115,7 @@ ActiveRecord::Schema.define(version: 2024_10_17_144908) do
     t.jsonb "jsonb", default: {}
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.jsonb "content_length_limits", default: {}
   end
 
   add_foreign_key "books", "users"
